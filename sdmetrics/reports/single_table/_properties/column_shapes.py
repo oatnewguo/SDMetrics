@@ -105,6 +105,7 @@ class ColumnShapes(BaseSingleTableProperty):
             },
         )
 
+        fig.update_xaxes(tickangle=45)
         fig.update_yaxes(range=[0, 1])
 
         fig.update_layout(
