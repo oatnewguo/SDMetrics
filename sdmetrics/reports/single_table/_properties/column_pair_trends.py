@@ -413,11 +413,11 @@ class ColumnPairTrends(BaseSingleTableProperty):
 
         fig.update_layout(
             title_text=f'Data Quality: Column Pair Trends (Average Score={average_score})',
-            coloraxis={**color_dict, 'colorbar_x': 0.8, 'colorbar_y': 0.8, 'colorscale': colors_1},
+            coloraxis={**color_dict, 'colorscale': colors_1},
             coloraxis2={**color_dict, 'colorbar_y': 0.2, 'cmin': -1, 'colorscale': colors_2},
             yaxis3={'visible': False, 'matches': 'y2'},
             xaxis3={'matches': 'x2'},
-            height=900,
+            height=750,
             width=900,
             font={'size': PlotConfig.FONT_SIZE},
         )
@@ -433,32 +433,15 @@ class ColumnPairTrends(BaseSingleTableProperty):
             plotly.graph_objects._figure.Figure
         """
         similarity_correlation = self._get_correlation_matrix('Score')
-        real_correlation = self._get_correlation_matrix('Real Correlation')
-        synthetic_correlation = self._get_correlation_matrix('Synthetic Correlation')
 
         titles = [
             'Real vs. Synthetic Similarity',
-            'Numerical Correlation (Real Data)',
-            'Numerical Correlation (Synthetic Data)',
         ]
-        specs = [[{'colspan': 2, 'l': 0.26, 'r': 0.26}, None], [{}, {}]]
         tmpl_1 = '<b>Column Pair</b><br>(%{x},%{y})<br><br>Similarity: %{z}<extra></extra>'
-        tmpl_2 = (
-            '<b>Correlation</b><br>(%{x},%{y})<br><br>Synthetic: %{z}<br>(vs. Real: '
-            '%{customdata})<extra></extra>'
-        )
 
-        fig = make_subplots(rows=2, cols=2, subplot_titles=titles, specs=specs)
+        fig = go.Figure(self._get_heatmap(similarity_correlation, 'coloraxis', tmpl_1))
 
         fig.update_xaxes(tickangle=45)
-
-        fig.add_trace(self._get_heatmap(similarity_correlation, 'coloraxis', tmpl_1), 1, 1)
-        fig.add_trace(
-            self._get_heatmap(real_correlation, 'coloraxis2', tmpl_2, synthetic_correlation), 2, 1
-        )
-        fig.add_trace(
-            self._get_heatmap(synthetic_correlation, 'coloraxis2', tmpl_2, real_correlation), 2, 2
-        )
 
         self._update_layout(fig)
 
