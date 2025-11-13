@@ -74,7 +74,6 @@ def _generate_column_bar_plot(real_data, synthetic_data, plot_kwargs={}):
         'pattern_shape': 'Data',
         'pattern_shape_sequence': ['', '/'],
         'histnorm': 'probability density',
-        'category_orders': {'values': all_data['values'].cat.categories}
     }
     histogram_kwargs.update(plot_kwargs)
     fig = px.histogram(all_data, **histogram_kwargs)
