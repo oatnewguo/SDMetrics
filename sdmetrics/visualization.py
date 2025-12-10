@@ -74,6 +74,7 @@ def _generate_column_bar_plot(real_data, synthetic_data, plot_kwargs={}):
         'pattern_shape': 'Data',
         'pattern_shape_sequence': ['', '/'],
         'histnorm': 'probability density',
+        'category_orders': {'values': all_data['values'].cat.categories}
     }
     histogram_kwargs.update(plot_kwargs)
     fig = px.histogram(all_data, **histogram_kwargs)
@@ -98,9 +99,14 @@ def _generate_heatmap_plot(all_data, columns):
 
     if len(columns) != 2:
         raise ValueError('Generating a heatmap plot requires exactly two columns for the axis.')
+    
+    category_orders = {}
+    category_orders[columns[0]] = all_data[columns[0]].cat.categories
+    category_orders[columns[1]] = all_data[columns[1]].cat.categories
 
     fig = px.density_heatmap(
-        all_data, x=columns[0], y=columns[1], facet_col='Data', histnorm='probability'
+        all_data, x=columns[0], y=columns[1], facet_col='Data', histnorm='probability',
+        category_orders = category_orders
     )
 
     title = ' vs. '.join(unique_values)
